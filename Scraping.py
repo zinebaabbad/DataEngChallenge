@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from readability import Document
+
 from rake_nltk import Rake
 
 class Scraping(object):
@@ -17,38 +17,53 @@ class Scraping(object):
 
     def scrapHtml(self,html:str):
         parsedHtml = BeautifulSoup(html, 'html.parser')
-        cleanHtml = Document(parsedHtml).get_clean_html()
-        return cleanHtml
-    def parseHtmlTag(self,cleanHtml,htmlTag, htmlOption, htmlValue):
+
+        return parsedHtml
+    def parseHtmlTag(self,cleanHtml,htmlTagDict):
+
+        tag=htmlTagDict["tag"]
+        tagOption=htmlTagDict["tagOption"]
+        tagValue=htmlTagDict["tagValue"]
+        return cleanHtml.html.find(tag,{ tagOption:tagValue})
+    def parseListHtmlTag(self,cleanHtml,htmlTagDict):
         ''' explore site news menu in order to scrape every article's category'''
-        return cleanHtml.html.find(htmlTag,{ htmlOption:htmlValue})
-    def parseListHtmlTag(self,cleanHtml,htmlTag, htmlOption, htmlValue):
-        ''' explore site news menu in order to scrape every article's category'''
-        return cleanHtml.html.find_all(htmlTag,{ htmlOption:htmlValue})
+        tag=htmlTagDict["tag"]
+        tagOption=htmlTagDict["tagOption"]
+        tagValue=htmlTagDict["tagValue"]
+        return cleanHtml.html.find_all(tag,{ tagOption:tagValue})
 class ArticleScarping(Scraping):
-    def __init__(self, url :str, authorHtmlTag: dict, dateHtmlTag:dict):
+    def __init__(self, url :str, authorHtmlTag: dict, dateHtmlTag:dict,articleHtmlTag:dict):
         Scraping.__init__(self,url)
         self.authorHtmlTag = authorHtmlTag
         self.dateHtmlTag = dateHtmlTag
+        self.articleHtmlTag=articleHtmlTag
         # init keywords extractor
-        self.rake = Rake()
+
 
     def parseArticle(self):
-        return self.parsedHtml.get_text()
+
+        return self.parseHtmlTag(self.parsedHtml,self.articleHtmlTag).get_text()
     def parseAuthor(self):
-        tag=self.authorHtmlTag["tag"]
-        tagOption=self.authorHtmlTag["tagOption"]
-        tagValue=self.authorHtmlTag["tagValue"]
-        return self.parsedHtml(tag, {tagOption:tagValue}).get_text()
+        return self.parseHtmlTag(self.parsedHtml,self.authorHtmlTag).get_text()
     def parseDate(self):
-        tag=self.dateHtmlTag["tag"]
-        tagOption=self.dateHtmlTag["tagOption"]
-        tagValue=self.dateHtmlTag["tagValue"]
-        return self.parsedHtml(tag, {tagOption:tagValue}).get_text()
+        try:
+            return str( self.parsedHtml.time['datetime'])
+        except:
+            return self.parseHtmlTag(self.parsedHtml,self.dateHtmlTag).get_text()
+
+
     def parseText(self):
-        return self.parsedHtml.get_text()
+        return self.parseHtmlTag(self.parsedHtml,self.articleHtmlTag).get_text()
     def getKeyWords(self):
-        self.rake.extract_keywords_from_text(self.parsedHtml)
+        '''
+        20 a word
+        :return:
+        '''
+        self.rake = Rake(max_length=30)
+        self.rake.extract_keywords_from_text(self.parseText())
+        result = self.rake.get_ranked_phrases_with_scores()
+        return[ elem [1] for elem in result[:10]]
+
     def parseTitle(self):
         title="nan"
         if (self.parsedHtml.title is not None):
@@ -59,13 +74,15 @@ class ArticleScarping(Scraping):
         "date":self.parseDate(),
         "author":self.parseAuthor(),
         "article":self.parseText(),
-        "keywords":self.getKeyWords(),}
+        "keywords":self.getKeyWords(),
+        "url":self.url}
         return json
 class newsSiteScraping(Scraping):
     def __init__(self, url :str, articleHtmlTag: dict):
         Scraping.__init__(self,url)
         self.articleHtmlTag = articleHtmlTag
     def scrapListArticles(self):
-        listArticles=[elem.find("href").get_text() for elem in self.parseListHtmlTag(self.parsedHtml)]
+        listArticlesHtml=self.parseListHtmlTag(self.parsedHtml,  self.articleHtmlTag )
+        listArticles=list(set([elem.get('href') for elem in listArticlesHtml]))
         return listArticles
 

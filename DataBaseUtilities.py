@@ -6,10 +6,12 @@ class MongoDataBase() :
         self.__initDatabase__(database)
         self.__initCollection__(collection)
 
+
     def __initConnString__(self,connString):
         if connString is None :
             #default CONNSTRING
-            self.connectionString="mongodb+srv://userGemography:6IXYIGz8tiMnuCs2@cluster0.1kqjy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+
+            self.connectionString=  "mongodb+srv://userGemography:wfc39j9lE8OFoon3@articles.1kqjy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
         else:
             self.connectionString=connString
 
@@ -17,16 +19,16 @@ class MongoDataBase() :
     def __initDatabase__(self, database):
         if database is None:
             # default database
-            self.database = self.client['datacampdb']
+            self.database = self.client.ArticlesDB
         else:
             self.database = self.client[database]
 
     def __initCollection__(self, collection):
         if collection is None:
             # default database
-            self.collection = self.database['datacampdb']
+            self.collection = self.database.ArticleCollection
         else:
-            self.collection = self.database[collection]
+            self.collection = self.database.collection
 
     def addEntry(self,articleJson):
         return self.collection.insert(articleJson)
@@ -36,6 +38,5 @@ class MongoDataBase() :
         return self.findEntry("keyword", keyWord)
     def findByTitle(self, title):
         return self.findEntry("title", title)
-    def textSearch(self,textSearch):
-        self.collection.createIndex( { "name": "text", "description": "text" } )
-        return self.collection.find( { "$text": { "$search": textSearch } } )
+
+m=MongoDataBase()
