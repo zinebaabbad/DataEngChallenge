@@ -6,5 +6,5 @@ print(requests.get(endpoint+'/home').text)
 print(requests.get(endpoint+"/refreshDatabase").text)
 print(requests.get(endpoint+"/articles/Martin Woollacott, former Guardian foreign editor, dies aged 81 | The Guardian | The Guardian").text)
 print(requests.get(endpoint+"/articles/author/Kari Paul").text)
-print(requests.get(endpoint+"/articles/keyword/manner journalists").text)
+print(requests.get(endpoint+"/articles/keyword/suez canal closuresuez canal shipping chartthe ever given").text)
 

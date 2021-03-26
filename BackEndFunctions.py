@@ -25,15 +25,15 @@ class Functions():
                 except:
                     resultJSON.append(elem+" could not be parsed")
                 #
-            return json.dumps(self.resultJSON)
+            return str(resultJSON)
 
 
     def getArticleByName(self,title):
-        return json.dumps(self.db.findByTitle(title))
+        return str(self.db.findByTitle(title))
 
     def getArticleByAuth(self, author):
-            return json.dumps(self.db.findByAuthor(author))
+            return str(self.db.findByAuthor(author))
 
     def getArticleBykeyword(self, keyword):
-            return json.dumps(self.db.findByKeyword(keyword))
+            return str(self.db.findByKeyword(keyword))
 

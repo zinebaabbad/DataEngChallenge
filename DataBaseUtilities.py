@@ -30,9 +30,8 @@ class MongoDataBase() :
     def findEntry(self,field,fieldValue):
         return self.collection.find_one( {field: fieldValue})
     def findByKeyword(self, keyWord):
-        return self.findEntry("keyword", keyWord)
+        return self.findEntry("keywords", keyWord)
     def findByTitle(self, title):
         return self.findEntry("title", title)
     def findByAuthor(self, author):
         return self.findEntry("author", author)
-
