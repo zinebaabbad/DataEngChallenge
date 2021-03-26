@@ -1,6 +1,5 @@
 import Scraping
 import DataBaseUtilities
-import json
 class Functions():
 
     def __init__(self):
