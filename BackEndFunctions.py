@@ -34,6 +34,10 @@ class Functions():
 
 
     def getArticleByName(self,title):
-        self.db.findByTitle(title)
-f=Functions().refreshDatabase()
-Functions().getArticleByName("")
+        return self.db.findByTitle(title)
+
+    def getArticleByAuth(self, title):
+            self.db.findByAuthor(title)
+        getArticleByAuth
+
+Functions().getArticleByName("Martin Woollacott, former Guardian foreign editor, dies aged 81 | The Guardian | The Guardian")

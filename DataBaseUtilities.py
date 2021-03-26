@@ -1,39 +1,34 @@
 from pymongo import MongoClient
 class MongoDataBase() :
-    def __init__(self,connString=None,database=None,collection=None):
-        self.__initConnString__( connString)
-        self.client = MongoClient(connString)
-        self.__initDatabase__(database)
-        self.__initCollection__(collection)
+    def __init__(self,connectionString="mongodb+srv://zineb:zineb@cluster0.itycp.mongodb.net/Blog?retryWrites=true&w=majority",database=None,collection=None):
+        self._initConnString_(connectionString)
+        self.client = MongoClient(connectionString)
+        self._initDatabase_(database)
+        self._initCollection_(collection)
 
 
-    def __initConnString__(self,connString):
-        if connString is None :
-            #default CONNSTRING
-
-            self.connectionString=  "mongodb+srv://userGemography:wfc39j9lE8OFoon3@articles.1kqjy.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-        else:
-            self.connectionString=connString
+    def _initConnString_(self,connectionString):
+            self.connectionString=connectionString
 
 
-    def __initDatabase__(self, database):
+    def _initDatabase_(self, database):
         if database is None:
             # default database
-            self.database = self.client.ArticlesDB
+            self.database = self.client["Blog"]
         else:
             self.database = self.client[database]
 
-    def __initCollection__(self, collection):
+    def _initCollection_(self, collection):
         if collection is None:
             # default database
-            self.collection = self.database.ArticleCollection
+            self.collection = self.database["articles"]
         else:
-            self.collection = self.database.collection
+            self.collection = self.database[collection]
 
     def addEntry(self,articleJson):
-        return self.collection.insert(articleJson)
+        return self.collection.insert_one(articleJson)
     def findEntry(self,field,fieldValue):
-        return self.collection.find( {field: fieldValue})
+        return self.collection.find_one( {field: fieldValue})
     def findByKeyword(self, keyWord):
         return self.findEntry("keyword", keyWord)
     def findByTitle(self, title):
