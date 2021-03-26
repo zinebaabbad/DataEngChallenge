@@ -31,9 +31,12 @@ class Scraping(object):
         tagOption=htmlTagDict["tagOption"]
         tagValue=htmlTagDict["tagValue"]
         return cleanHtml.html.find_all(tag,{ tagOption:tagValue})
+
+
 class ArticleScarping(Scraping):
     def __init__(self, url :str, authorHtmlTag: dict, dateHtmlTag:dict,articleHtmlTag:dict):
         Scraping.__init__(self,url)
+        #find hmtl sections with the given tag
         self.authorHtmlTag = authorHtmlTag
         self.dateHtmlTag = dateHtmlTag
         self.articleHtmlTag=articleHtmlTag
@@ -62,7 +65,8 @@ class ArticleScarping(Scraping):
         self.rake = Rake(max_length=30)
         self.rake.extract_keywords_from_text(self.parseText())
         result = self.rake.get_ranked_phrases_with_scores()
-        return[ elem [1] for elem in result[:10]]
+        resultlist=[elem [1] for elem in result[:10]]
+        return resultlist
 
     def parseTitle(self):
         title="nan"
@@ -77,6 +81,7 @@ class ArticleScarping(Scraping):
         "keywords":self.getKeyWords(),
         "url":self.url}
         return json
+
 class newsSiteScraping(Scraping):
     def __init__(self, url :str, articleHtmlTag: dict):
         Scraping.__init__(self,url)

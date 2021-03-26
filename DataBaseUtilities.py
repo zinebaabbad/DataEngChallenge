@@ -33,5 +33,6 @@ class MongoDataBase() :
         return self.findEntry("keyword", keyWord)
     def findByTitle(self, title):
         return self.findEntry("title", title)
+    def findByAuthor(self, author):
+        return self.findEntry("author", author)
 
-m=MongoDataBase()
