@@ -1,5 +1,5 @@
 # DataEngChallenge
-The aim of this project is to scrap articles from the bbc home page, parse the title, author, name ,date and the full article.The date is stored in a mongodb database.
+The aim of this project is to scrap articles from the guardian home page, parse the title, author, name ,date and the full article.The date is stored in a mongodb database.
 
 
 # Classes description : 
